@@ -1,0 +1,653 @@
+{
+  "name": "Habitos",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "formulario-creacion2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        192
+      ],
+      "id": "7d24791b-43de-411d-84e9-d25f72b4b723",
+      "name": "Webhook",
+      "webhookId": "af45d0e7-2d31-4a3b-968e-f402c30c7219"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dab85afd-ca93-403e-b8f4-623c87b640c8",
+              "name": "ticket",
+              "value": "={{ $now.toFormat('yyyyMMdd')}}{{ $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "3729359a-df8e-468a-88cc-3f5ed7dd4618",
+              "name": "nombre",
+              "value": "={{ $json.body.usuario.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "31f68964-9bc3-448b-9404-309d3017cd8d",
+              "name": "email",
+              "value": "={{ $json.body.usuario.email }}",
+              "type": "string"
+            },
+            {
+              "id": "3ab998b9-b057-44d4-87e7-6ffbfee3cab3",
+              "name": "categoria",
+              "value": "={{ $json.body.habito.categoria }}",
+              "type": "string"
+            },
+            {
+              "id": "b328c63c-d05a-45fd-b45e-2611cb3afa6d",
+              "name": "habito",
+              "value": "={{ $json.body.habito.habito }}",
+              "type": "string"
+            },
+            {
+              "id": "7cd84051-2694-4e60-8520-d55957c14ffa",
+              "name": "cumplido",
+              "value": "={{ $json.body.habito.cumplido }}",
+              "type": "string"
+            },
+            {
+              "id": "0e4d31d0-af66-4479-98bb-99365a6e14c6",
+              "name": "comentario",
+              "value": "={{ $json.body.habito.comentario }}",
+              "type": "string"
+            },
+            {
+              "id": "de7a588c-19bd-41aa-8748-aca48046a5a9",
+              "name": "fecha_registro",
+              "value": "={{ $json.body.habito.fecha_registro }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        192
+      ],
+      "id": "c2bd2753-4811-4ef3-8913-45ade8a21d48",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    email_usuario,\n    nombre_usuario,\n    ROUND(100.0 * SUM(\n        CASE \n            WHEN cumplido = 'Sí' THEN 1.0 \n            WHEN cumplido = 'Parcial' THEN 0.5 \n            ELSE 0.0 \n        END\n    ) / COUNT(*), 1) AS porcentaje_cumplimiento\nFROM habitos_registrados\nWHERE email_usuario = '{{ $json.email_usuario }}'\n  AND fecha_registro >= DATE_TRUNC('month', CURRENT_DATE)\nGROUP BY email_usuario, nombre_usuario;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        672,
+        192
+      ],
+      "id": "21d94058-0e3e-40c1-9dfb-ca6a4a396186",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "hce7oD75FhbaGmuS",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "habitos_registrados",
+          "mode": "list",
+          "cachedResultName": "habitos_registrados"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre_usuario": "={{ $json.nombre }}",
+            "email_usuario": "={{ $json.email }}",
+            "categoria": "={{ $json.categoria }}",
+            "comentario": "={{ $json.comentario }}",
+            "fecha_registro": "={{ $json.fecha_registro }}",
+            "habito": "={{ $json.habito }}",
+            "cumplido": "={{ $json.cumplido }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nombre_usuario",
+              "displayName": "nombre_usuario",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email_usuario",
+              "displayName": "email_usuario",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "categoria",
+              "displayName": "categoria",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "habito",
+              "displayName": "habito",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cumplido",
+              "displayName": "cumplido",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "comentario",
+              "displayName": "comentario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fecha_registro",
+              "displayName": "fecha_registro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        448,
+        192
+      ],
+      "id": "f39d175d-a4d4-47b4-80ea-577610e5e6f1",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "hce7oD75FhbaGmuS",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.rango }}",
+                    "rightValue": "Nivel de constancia: Bajo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "007fba3a-fb58-4bf2-b20e-f008f76ec812"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Bajo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7baaa976-44ad-4770-b4fb-c9e22703b0dc",
+                    "leftValue": "={{ $json.rango }}",
+                    "rightValue": "Nivel de constancia: Medio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Medio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a5621508-d8f8-4c1e-8077-233a697e4142",
+                    "leftValue": "={{ $json.rango }}",
+                    "rightValue": "Nivel de constancia: Alto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Alto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        64
+      ],
+      "id": "4c7f30e0-989e-4152-a9c5-ee62c5e57d43",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "47825512-e29d-4b1e-b36a-ece7b0c9c151",
+              "name": "porcentaje_cumplimiento",
+              "value": "={{ $json.porcentaje_cumplimiento }}",
+              "type": "string"
+            },
+            {
+              "id": "b4cecddc-f15d-4e40-b06c-85e987d08021",
+              "name": "rango",
+              "value": "={{ $json.porcentaje_cumplimiento <= 40 ? \"Nivel de constancia: Bajo\" : $json.porcentaje_cumplimiento <= 75 ? \"Nivel de constancia: Medio\" : \"Nivel de constancia: Alto\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        192
+      ],
+      "id": "b1145d4f-d3a9-4c37-a774-430bc23e25a7",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14_lUaz_X2EY8cITJRgdOITtVP19w_D_smUzOP3enPq4",
+          "mode": "list",
+          "cachedResultName": "Habitos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14_lUaz_X2EY8cITJRgdOITtVP19w_D_smUzOP3enPq4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14_lUaz_X2EY8cITJRgdOITtVP19w_D_smUzOP3enPq4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ $('Execute a SQL query').item.json.nombre_usuario }}",
+            "Email": "={{ $('Execute a SQL query').item.json.email_usuario }}",
+            "Porcentaje de cumplimiento": "={{ $('Execute a SQL query').item.json.porcentaje_cumplimiento }}",
+            "Categoria": "={{ $('Insert rows in a table').item.json.categoria }}",
+            "Rango / Nivel": "={{ $json.rango }}",
+            "Fecha Registro": "={{ $('Insert rows in a table').item.json.fecha_registro }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Categoria",
+              "displayName": "Categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Porcentaje de cumplimiento",
+              "displayName": "Porcentaje de cumplimiento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rango / Nivel",
+              "displayName": "Rango / Nivel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fecha Registro",
+              "displayName": "Fecha Registro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        288
+      ],
+      "id": "553c78f2-2b91-4149-bfb5-d89cbcf461b6",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "79fE70HNqRvYUJs6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Execute a SQL query').item.json.email_usuario }}",
+        "subject": "=Reporte de Hábitos - Nivel de Constancia Bajo",
+        "emailType": "text",
+        "message": "=Hola {{ $('Execute a SQL query').item.json.nombre_usuario }},\n\nHemos registrado tu hábito más reciente. Tu porcentaje de cumplimiento acumulado en el mes actual es del {{ $('Execute a SQL query').item.json.porcentaje_cumplimiento }}%.\n\nEstado actual: Nivel de constancia: Bajo.\n\n¡No te desanimes! Recuerda que la clave es la consistencia. Intenta dar pequeños pasos cada día.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        -112
+      ],
+      "id": "977a4bf1-a06e-49f8-81f3-ba215174d194",
+      "name": "Send a message",
+      "webhookId": "33e51385-a124-4514-a5ca-f35dec77f546",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UajKomYKVb2aHKZ7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Execute a SQL query').item.json.email_usuario }}",
+        "subject": "=Reporte de Hábitos - Nivel de Constancia Medio",
+        "emailType": "text",
+        "message": "=Hola {{ $('Execute a SQL query').item.json.nombre_usuario }},\n\n¡Buen trabajo! Tu porcentaje de cumplimiento acumulado en el mes actual es del {{ $('Execute a SQL query').item.json.porcentaje_cumplimiento }}% \n\nEstado actual: Nivel de constancia: Medio.\n\nVas por buen camino. Un pequeño esfuerzo adicional te llevará al nivel más alto.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        80
+      ],
+      "id": "82ef6500-57ea-4b44-ba20-79020960e4bc",
+      "name": "Send a message1",
+      "webhookId": "e29d6b02-c40d-4192-96cd-26b8f875f940",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UajKomYKVb2aHKZ7",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Execute a SQL query').item.json.email_usuario }}",
+        "subject": "=Reporte de Hábitos - ¡Nivel de Constancia Alto!",
+        "emailType": "text",
+        "message": "=Hola {{ $('Execute a SQL query').item.json.nombre_usuario }},\n\n¡Felicidades por tu excelente disciplina! Tu porcentaje de cumplimiento acumulado en el mes actual es del {{ $json.porcentaje_cumplimiento }}%.\n\nEstado actual: Nivel de constancia: Alto.\n\n¡Sigue así y mantén el ritmo para cerrar el mes con éxito!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        256
+      ],
+      "id": "b1169446-90ca-4bcb-8d0c-28f324c4338e",
+      "name": "Send a message2",
+      "webhookId": "b435c993-5d40-4c21-a49b-a6f435c3dad1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UajKomYKVb2aHKZ7",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "53643427-2e94-45b1-b48f-810875f409b4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7d0ee3ea1300f67fbcb8838b18c8b0730e58d3b2284d4f9020932f92a78d7484"
+  },
+  "nodeGroups": [],
+  "id": "Pe5mxHNvvpWgzvW3",
+  "tags": []
+}

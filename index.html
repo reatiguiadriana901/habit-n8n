@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitTracker Pro - Registro de Hábitos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <span class="badge">✨ Tu Progreso Diario</span>
+            <h1>HabitTracker Pro</h1>
+            <p>Registra tus metas del día y sigue tu constancia por categoría</p>
+        </div>
+
+        <form id="habitForm">
+            <div class="row">
+                <div class="form-group">
+                    <label for="nombre">Tu Nombre</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Adriana" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Tu Correo</label>
+                    <input type="email" id="email" name="email" placeholder="adriana@email.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria">Categoría</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="" disabled selected>Selecciona una categoría...</option>
+                    <option value="Salud">🩺 Salud</option>
+                    <option value="Estudio">📚 Estudio</option>
+                    <option value="Finanzas">💰 Finanzas</option>
+                    <option value="Mente">🧠 Mente</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="habito">Meta / Hábito de hoy</label>
+                <input type="text" id="habito" name="habito" placeholder="Ej. Ir al gym, estudiar inglés, revisar gastos..." required>
+            </div>
+
+            <div class="form-group">
+                <label>¿La cumpliste hoy?</label>
+                <div class="btn-group" id="cumplidoGroup">
+                    <button type="button" class="option-btn" data-value="Sí">✅ Sí</button>
+                    <button type="button" class="option-btn" data-value="Parcial">🟡 Parcial</button>
+                    <button type="button" class="option-btn" data-value="No">❌ No</button>
+                </div>
+                <input type="hidden" id="cumplido" name="cumplido" required>
+            </div>
+
+            <div class="form-group">
+                <label for="comentario">Notas / Reflexión del día (Opcional)</label>
+                <textarea id="comentario" name="comentario" rows="3" placeholder="¿Cómo te sentiste hoy cumpliendo esta meta?"></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn">🚀 Registrar Meta en n8n</button>
+        </form>
+
+        <div id="alertBox" class="alert"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
